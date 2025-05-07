@@ -16,4 +16,5 @@ public class EstimatedDiameter {
 
      @JsonProperty("meters")
      private DiameterRange meters;
+
 }

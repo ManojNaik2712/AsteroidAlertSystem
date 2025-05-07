@@ -20,4 +20,5 @@ public class NasaNeoResponse {
 
     @JsonProperty("element_count")
     private Long totalAsteroids;
+
 }

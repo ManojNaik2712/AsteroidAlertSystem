@@ -2,7 +2,9 @@ package com.example.asteroidalerting.Client;
 
 import com.example.asteroidalerting.DTO.Asteroid;
 import com.example.asteroidalerting.DTO.NasaNeoResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -12,16 +14,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class NasaClient {
 
-    @Value("{nasa.neo.api.url}")
+    @Value("${nasa.neo.api.url}")
     private String nasaNeoApiUrl;
 
-    @Value("{nasa.api.key}")
+    @Value("${nasa.api.key}")
     private String nasaApiKey;
 
-    public List<Asteroid> getAesteroids(LocalDate fromDate, LocalDate toDate) {
+    public List<Asteroid> getAsteroids(LocalDate fromDate, LocalDate toDate) {
         RestTemplate restTemplate=new RestTemplate();
+
+        ResponseEntity<String> responseEntity=restTemplate.getForEntity(geturl(fromDate, toDate), String.class);
 
         final NasaNeoResponse nasaNeoResponse=
                 restTemplate.getForObject(geturl(fromDate,toDate), NasaNeoResponse.class);
@@ -34,11 +39,10 @@ public class NasaClient {
     }
 
     private String geturl(LocalDate fromDate, LocalDate toDate) {
-        String apiUrl= UriComponentsBuilder.fromHttpUrl(nasaNeoApiUrl)
+        String apiUrl= UriComponentsBuilder.fromUriString(nasaNeoApiUrl)
                 .queryParam("start_date",fromDate)
                 .queryParam("end_date",toDate)
                 .queryParam("api_key",nasaApiKey)
-                .build()
                 .toUriString();
         return apiUrl;
     }

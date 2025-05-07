@@ -19,7 +19,7 @@ public class AesteroidAlertService {
     NasaClient nasaClient;
 
     @Autowired
-    KafkaTemplate kafkaTemplate;
+    KafkaTemplate<String,AsteroidCollisonEvent> kafkaTemplate;
 
     public void alert() {
 
@@ -28,7 +28,7 @@ public class AesteroidAlertService {
         final LocalDate toDate = LocalDate.now().plusDays(7);
 
         //call the Nasa api to get the aesteroid data
-        final List<Asteroid> asteroidList = nasaClient.getAesteroids(fromDate, toDate);
+        final List<Asteroid> asteroidList = nasaClient.getAsteroids(fromDate, toDate);
 
         //if there is any hazardous asteroids, send an alert
         final List<Asteroid> dangerousAsteroids = asteroidList.stream()
@@ -40,6 +40,7 @@ public class AesteroidAlertService {
 
         asteroidCollisonEventList.forEach(event-> {
             kafkaTemplate.send("asteroid-alert",event);
+            log.info("Asteroid alert sent to Kafka topic: {}", event);
         });
     }
 
