@@ -21,7 +21,7 @@ public class NotificationService {
     @Autowired
     EmailService emailService;
 
-    @KafkaListener(topics = "asteroid-alert", groupId = "notification-service")
+    @KafkaListener(topics = "asteroid-alert", groupId = "asteroid-alert")
     public void alertEvent(AsteroidCollisionEvent notificationEvent) {
         log.info("Recieved event: {}", notificationEvent);
 
